@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Links</title>
+</head>
+<body>
+<div style="width: 350px;margin: auto;padding: 20px">
+    <h2>Creat Unified link</h2>
+    <input id="inputCreat">
+    <button onclick="makeReqCreatLink()">Creat</button>
+    <h2 id="answerCreatLink"></h2>
+</div>
+<div style="width: 350px;margin: auto;padding: 20px">
+    <h2>Get original link</h2>
+    <input id="inputGet">
+    <button onclick="makeReqGetLink()">get</button>
+    <h2 id="answerGetLink"></h2>
+</div>
+</body>
+</html>
+<style>
+    input {
+        width: 200px;
+        height: 50px;
+        border-radius: 5px;
+        border: 1px solid black;
+        font-size: 18px
+    }
+
+    button {
+        margin-top: 20px;
+        display: block;
+        width: 100px;
+        height: 50px;
+        border-radius: 5px;
+        border: 1px solid black;
+        font-size: 18px;
+        background-color: white
+    }
+
+    button:hover {
+        background-color: dimgray;
+    }
+</style>
+<script>
+    async function makeReqGetLink() {
+        console.log("hi get link")
+        let link = document.getElementById("inputGet").value
+        let response = await fetch('/api/getLink?url=' + link, {
+            method: 'GET',
+            // body: JSON.stringify({id: id}),
+        });
+        if (response.ok) { // если HTTP-статус в диапазоне 200-299
+            // получаем тело ответа (см. про этот метод ниже)
+            let respJson = await response.json()
+            console.log(respJson.URL)
+            console.log("okkkk")
+            document.getElementById("answerGetLink").innerHTML = "original link : " + respJson.URL
+        } else if (response.status > 299 && response.status < 500) {
+            console.log("err")
+
+        } else if (response.status > 500) {
+            console.log("some wrong on backend")
+        }
+    }
+
+    async function makeReqCreatLink() {
+        console.log("hi creat link")
+
+        let link = document.getElementById("inputCreat").value
+        let response = await fetch('/api/newLink', {
+            method: 'POST',
+            body: JSON.stringify({url: link}),
+        });
+        if (response.ok) { // если HTTP-статус в диапазоне 200-299
+            // получаем тело ответа (см. про этот метод ниже)
+            let respJson = await response.json()
+            console.log(respJson.URL)
+            document.getElementById("answerCreatLink").innerHTML = "unified link : " + respJson.URL
+            console.log("okkkk")
+        } else if (response.status > 299 && response.status < 500) {
+            console.log("err")
+
+        } else if (response.status > 500) {
+            console.log("some wrong on backend")
+        }
+    }
+
+</script>
